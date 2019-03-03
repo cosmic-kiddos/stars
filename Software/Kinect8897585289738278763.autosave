@@ -22,13 +22,13 @@ void updateKinect() {
   int[] depthPoints = context.depthMap(); 
   int depthW = context.depthWidth();
   int depthH = context.depthHeight();
-  int pixelSkip = 20;
+  int pixelSkip = 10;
 
   // configure active depth
   int kinectNear = 500;
   int kinectFar = 2500;
-  int silhouetteNear = 500;
-  int silhouetteFar = 1500;
+  int silhouetteNear = 1000;
+  int silhouetteFar = 2000;
 
   noStroke(); 
   fill(255);
@@ -41,7 +41,7 @@ void updateKinect() {
     int gridIndex = x + y * depthW;
     int curDepth = depthPoints[gridIndex];
     
-    // draw low-res depth data
+    //// draw low-res depth data
     //if(curDepth > 0) {  // only draw depth point if there's good data
     //  // set color to reflect distance - darker if further away
     //  fill(map(curDepth, kinectNear, kinectFar, 255, 100));
@@ -52,8 +52,8 @@ void updateKinect() {
     // draw only values within silhouette range
     fill(255);
     if(curDepth > silhouetteNear && curDepth < silhouetteFar) {
+      //println(x, y);
       rect(x, y, pixelSkip, pixelSkip);
-      s1.checkCollision(x, y);
     }
   }
 }

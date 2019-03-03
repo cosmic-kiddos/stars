@@ -41,7 +41,7 @@ class Star {
     float dx = getX() - x;
     float dy = getY() - y;
     float distSq = (dx * dx) + (dy * dy);
-  
+
     if (minPushDist > distSq) {
       // isColliding = true;
       float mag = sqrt(dx * dx + dy * dy);
