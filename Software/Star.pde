@@ -37,6 +37,21 @@ class Star {
     yOffset += newYOffset;
   }
 
+  void checkCollision(int x, int y) {
+    float dx = getX() - x;
+    float dy = getY() - y;
+    float distSq = (dx * dx) + (dy * dy);
+  
+    if (minPushDist > distSq) {
+      // isColliding = true;
+      float mag = sqrt(dx * dx + dy * dy);
+      float pushX = dx / mag;
+      float pushY = dy / mag;
+
+      setPosition(pushX, pushY);
+    }
+  }
+
   void update() {
     if (!isColliding) {
       if (xOffset > 1 || xOffset < -1) xOffset -= xOffset / MAX_OFFSET * SPRING_SPEED;

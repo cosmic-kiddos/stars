@@ -22,7 +22,7 @@ void updateKinect() {
   int[] depthPoints = context.depthMap(); 
   int depthW = context.depthWidth();
   int depthH = context.depthHeight();
-  int pixelSkip = 5;
+  int pixelSkip = 20;
 
   // configure active depth
   int kinectNear = 500;
@@ -53,6 +53,7 @@ void updateKinect() {
     fill(255);
     if(curDepth > silhouetteNear && curDepth < silhouetteFar) {
       rect(depthW + x, y, pixelSkip, pixelSkip);
+      s1.checkCollision(x, y);
     }
   }
 }

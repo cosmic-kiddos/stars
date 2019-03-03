@@ -14,7 +14,7 @@ void setup() {
   noStroke();
   background(0, 0, 0);
 
-  // initKinect();
+  initKinect();
 }
 
 void draw() {
@@ -26,18 +26,18 @@ void draw() {
   // If mouse within "r" of start 1 push it outward?
   s1.update();
   s1.draw();
-  s1.setColliding(shouldPush(s1));
-  if (s1.isColliding) {
-    println(":P");
-    float dx = s1.getX() - mouseX;
-    float dy = s1.getY() - mouseY;
-    float mag = sqrt(dx * dx + dy * dy);
+  // s1.setColliding(shouldPush(s1));
+  // if (s1.isColliding) {
+  //   println(":P");
+  //   float dx = s1.getX() - mouseX;
+  //   float dy = s1.getY() - mouseY;
+  //   float mag = sqrt(dx * dx + dy * dy);
 
-    float pushX = dx / mag;
-    float pushY = dy / mag;
+  //   float pushX = dx / mag;
+  //   float pushY = dy / mag;
 
-    s1.setPosition(pushX, pushY);
-  }
+  //   s1.setPosition(pushX, pushY);
+  // }
 
   pushMatrix();
   translate(mouseX, mouseY);
