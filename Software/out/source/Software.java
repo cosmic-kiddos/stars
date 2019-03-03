@@ -32,13 +32,13 @@ public void setup() {
   noStroke();
   background(0, 0, 0);
 
-  initKinect();
+  // initKinect();
 }
 
 public void draw() {
   background(20);
 
-  updateKinect();
+  // updateKinect();
 
   // If mouse within "r" of start 1 push it outward?
   s1.update();
@@ -68,32 +68,32 @@ public void draw() {
 SimpleOpenNI context;
 
 public void initKinect() {
-  // context = new SimpleOpenNI(this);
+  context = new SimpleOpenNI(this);
 
-  // if (context.isInit() == false) {
-  //   println("Can't init SimpleOpenNI, maybe the camera is not connected!"); 
-  //   exit();
-  //   return;
-  // }
+  if (context.isInit() == false) {
+    println("Can't init SimpleOpenNI, maybe the camera is not connected!"); 
+    exit();
+    return;
+  }
 
-  // context.setMirror(false);
-  // context.enableDepth();
+  context.setMirror(false);
+  context.enableDepth();
 }
 
 public void updateKinect() {
-  // context.update();
+  context.update();
 
-  // // get depth grid
-  // int[] depthPoints = context.depthMap(); 
-  // int depthW = context.depthWidth();
-  // int depthH = context.depthHeight();
-  // int pixelSkip = 5;
+  // get depth grid
+  int[] depthPoints = context.depthMap(); 
+  int depthW = context.depthWidth();
+  int depthH = context.depthHeight();
+  int pixelSkip = 5;
 
-  // // configure active depth
-  // int kinectNear = 500;
-  // int kinectFar = 2500;
-  // int silhouetteNear = 1700;
-  // int silhouetteFar = 2000;
+  // configure active depth
+  int kinectNear = 500;
+  int kinectFar = 2500;
+  int silhouetteNear = 1700;
+  int silhouetteFar = 2000;
 }
 class Star {
   static final float MAX_OFFSET = 100;

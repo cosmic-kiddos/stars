@@ -18,9 +18,10 @@ void setup() {
 }
 
 void draw() {
+  // set draw properties
   background(20);
 
-  // updateKinect();
+  updateKinect();
 
   // If mouse within "r" of start 1 push it outward?
   s1.update();
