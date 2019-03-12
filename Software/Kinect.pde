@@ -2,6 +2,8 @@ import SimpleOpenNI.*;
 
 SimpleOpenNI context;
 
+boolean kinectInitialized = false;
+
 void initKinect() {
   context = new SimpleOpenNI(this);
 
@@ -13,47 +15,54 @@ void initKinect() {
 
   context.setMirror(false);
   context.enableDepth();
+  
+  kinectInitialized = true;
 }
 
 void updateKinect() {
-  context.update();
-
-  // get depth grid
-  int[] depthPoints = context.depthMap(); 
-  int depthW = context.depthWidth();
-  int depthH = context.depthHeight();
-  int pixelSkip = 20;
-
-  // configure active depth
-  int kinectNear = 500;
-  int kinectFar = 2500;
-  int silhouetteNear = 500;
-  int silhouetteFar = 1500;
-
-  noStroke(); 
-  fill(255);
-
-  // loop through depth array 
-  for(int i = 0; i < depthPoints.length; i += pixelSkip){
-    // get the depth in millimeter
-    int x = i % depthW;
-    int y = floor(i / depthW);
-    int gridIndex = x + y * depthW;
-    int curDepth = depthPoints[gridIndex];
-    
-    // draw low-res depth data
-    //if(curDepth > 0) {  // only draw depth point if there's good data
-    //  // set color to reflect distance - darker if further away
-    //  fill(map(curDepth, kinectNear, kinectFar, 255, 100));
-    //  // draw the current point
-    //  rect(x, y, pixelSkip, pixelSkip);
-    //}
-    
-    // draw only values within silhouette range
+  if (kinectInitialized) {
+    context.update();
+  
+    // get depth grid
+    int[] depthPoints = context.depthMap(); 
+    int depthW = context.depthWidth();
+    int depthH = context.depthHeight();
+    int pixelSkip = 10;
+  
+    // configure active depth
+    int kinectNear = 500;
+    int kinectFar = 2500;
+    int silhouetteNear = 800;
+    int silhouetteFar = 1800;
+  
+    noStroke(); 
     fill(255);
-    if(curDepth > silhouetteNear && curDepth < silhouetteFar) {
-      rect(x, y, pixelSkip, pixelSkip);
-      s1.checkCollision(x, y);
+  
+    // loop through depth array 
+    for(int i = 0; i < depthPoints.length; i += pixelSkip){
+      // get the depth in millimeter
+      int x = i % depthW;
+      int y = floor(i / depthW);
+      int gridIndex = x + y * depthW;
+      int curDepth = depthPoints[gridIndex];
+      
+      // draw low-res depth data
+      //if(curDepth > 0) {  // only draw depth point if there's good data
+      //  // set color to reflect distance - darker if further away
+      //  fill(map(curDepth, kinectNear, kinectFar, 255, 100));
+      //  // draw the current point
+      //  rect(x, y, pixelSkip, pixelSkip);
+      //}
+      
+      // draw only values within silhouette range
+      fill(255);
+      if(curDepth > silhouetteNear && curDepth < silhouetteFar) {
+        rect(x, y, pixelSkip, pixelSkip);
+  
+        for (int si = 0; si < 24; si++) {
+          stars[si].checkCollision(x, y);
+        }
+      }
     }
   }
 }

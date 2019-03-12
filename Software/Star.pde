@@ -1,7 +1,11 @@
+//final calculations!! circle diameter is 5.75 inches
+//sooo the arms fully extended are 2.875 (2 7/8th) inches long
+//with the two parts being 1.4375 (1 7/16th) inches long each
+
 class Star {
-  static final float MAX_OFFSET = 100;
+  static final float MAX_OFFSET = 2.875 / 24;
   static final float SPRING_SPEED = 3;
-  static final int radius = 30;
+  static final int radius = 10;
 
   float baseX;
   float baseY;
@@ -15,9 +19,9 @@ class Star {
 
   boolean isColliding = false;
 
-  Star(float x, float y) {
-    baseX = x;
-    baseY = y;
+  Star(int col, int row) {
+    baseX = WINDOW_WIDTH / 4 * (col + 0.5);
+    baseY = WINDOW_HEIGHT / 6 * (row + 0.5);
   }
 
   float getX() {
@@ -71,7 +75,7 @@ class Star {
     translate(baseX, baseY);
     stroke(255);
     noFill();
-    circle(0, 0, MAX_OFFSET * 2);
+    circle(0, 0, WINDOW_WIDTH * MAX_OFFSET * 2);
     popMatrix();
   }
 }
