@@ -29,7 +29,6 @@ void updateKinect() {
     int depthW = context.depthWidth();
     int depthH = context.depthHeight();
     int pixelSkip = 10;
-    println(depthW);
     
     int scale = WINDOW_HEIGHT / 480;
     

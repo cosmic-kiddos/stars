@@ -4,7 +4,7 @@
 float MAX_OFFSET = 2.875 / 24;
 class Star {
   float SPRING_SPEED = WINDOW_WIDTH / 2.5;
-  static final int radius = 10;
+  static final int radius = 20;
 
   float baseX;
   float baseY;
@@ -35,9 +35,15 @@ class Star {
     isColliding = isCol;
   }
 
-  void setPosition(float newXOffset, float newYOffset) {
-    xOffset += newXOffset;
-    yOffset += newYOffset;
+  void setPosition(float dxOffset, float dyOffset) {
+    float newXOffset = xOffset + dxOffset;
+    float newYOffset = yOffset + dyOffset;
+    
+    float offsetMag = sqrt(newXOffset * newXOffset + newYOffset * newYOffset);
+    if (offsetMag < MAX_OFFSET * WINDOW_WIDTH) {
+      xOffset = newXOffset;
+      yOffset = newYOffset;
+    }
   }
 
   void checkCollision(int x, int y) {
