@@ -24,10 +24,17 @@ void updateKinect() {
     context.update();
   
     // get depth grid
-    int[] depthPoints = context.depthMap(); 
+    int[] depthPoints = context.depthMap();
+    // 320, 480
     int depthW = context.depthWidth();
     int depthH = context.depthHeight();
     int pixelSkip = 10;
+    println(depthW);
+    
+    int scale = WINDOW_HEIGHT / 480;
+    
+    int xMin = 160;
+    int xMax = 480;
   
     // configure active depth
     int kinectNear = 500;
@@ -35,11 +42,11 @@ void updateKinect() {
     int silhouetteNear = 800;
     int silhouetteFar = 1800;
   
-    noStroke(); 
+    noStroke();
     fill(255);
   
     // loop through depth array 
-    for(int i = 0; i < depthPoints.length; i += pixelSkip){
+    for(int i = 0; i < depthPoints.length; i += pixelSkip) {
       // get the depth in millimeter
       int x = i % depthW;
       int y = floor(i / depthW);
@@ -54,13 +61,16 @@ void updateKinect() {
       //  rect(x, y, pixelSkip, pixelSkip);
       //}
       
-      // draw only values within silhouette range
-      fill(255);
-      if(curDepth > silhouetteNear && curDepth < silhouetteFar) {
-        rect(x, y, pixelSkip, pixelSkip);
-  
-        for (int si = 0; si < numStars; si++) {
-          stars[si].checkCollision(x, y);
+      if (x >= xMin && x <= xMax) {
+        int translatedX = x - round(xMin / 1.25);
+        // draw only values within silhouette range
+        fill(255);
+        if(curDepth > silhouetteNear && curDepth < silhouetteFar) {
+          rect(translatedX * scale, y * scale, pixelSkip * scale, pixelSkip * scale);
+    
+          for (int si = 0; si < numStars; si++) {
+            stars[si].checkCollision(translatedX * scale, y * scale);
+          }
         }
       }
     }
