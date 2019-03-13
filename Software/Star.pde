@@ -1,10 +1,9 @@
 //final calculations!! circle diameter is 5.75 inches
 //sooo the arms fully extended are 2.875 (2 7/8th) inches long
 //with the two parts being 1.4375 (1 7/16th) inches long each
-
+float MAX_OFFSET = 2.875 / 24;
 class Star {
-  static final float MAX_OFFSET = 2.875 / 24;
-  static final float SPRING_SPEED = 3;
+  float SPRING_SPEED = WINDOW_WIDTH / 2.5;
   static final int radius = 10;
 
   float baseX;
@@ -51,15 +50,14 @@ class Star {
       float mag = sqrt(dx * dx + dy * dy);
       float pushX = dx / mag;
       float pushY = dy / mag;
-
       setPosition(pushX, pushY);
     }
   }
 
   void update() {
     if (!isColliding) {
-      if (xOffset > 1 || xOffset < -1) xOffset -= xOffset / MAX_OFFSET * SPRING_SPEED;
-      if (yOffset > 1 || yOffset < -1) yOffset -= yOffset / MAX_OFFSET * SPRING_SPEED;
+      if (xOffset > 1 || xOffset < -1) xOffset -= xOffset / WINDOW_WIDTH * MAX_OFFSET * SPRING_SPEED;
+      if (yOffset > 1 || yOffset < -1) yOffset -= yOffset / WINDOW_WIDTH * MAX_OFFSET * SPRING_SPEED;
     }
   }
 

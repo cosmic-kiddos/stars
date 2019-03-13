@@ -59,7 +59,7 @@ void updateKinect() {
       if(curDepth > silhouetteNear && curDepth < silhouetteFar) {
         rect(x, y, pixelSkip, pixelSkip);
   
-        for (int si = 0; si < 24; si++) {
+        for (int si = 0; si < numStars; si++) {
           stars[si].checkCollision(x, y);
         }
       }
