@@ -39,7 +39,7 @@ void updateKinect() {
     int kinectNear = 500;
     int kinectFar = 2500;
     int silhouetteNear = 800;
-    int silhouetteFar = 1800;
+    int silhouetteFar = 2200;
   
     noStroke();
     fill(255);

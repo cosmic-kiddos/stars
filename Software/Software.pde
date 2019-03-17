@@ -29,7 +29,7 @@ void setup() {
   background(0, 0, 0);
   
   // Uncomment this to enable kinect stuff
-  initKinect();
+  //initKinect();
   
   
   println("PORTS");
@@ -81,12 +81,14 @@ void draw() {
   popMatrix();
   
   // Serial message test
-  //stepperController.write("0,0,0,0,0-");
-  //delay(1000);
-  //stepperController.write("90,0,0,0,0-");
-  //delay(1000);
-  //stepperController.write("120,0,0,0,0-");
-  //delay(1000);
-  //stepperController.write("80,0,0,0,0-");
-  //delay(1000);
+  for (int i = 0; i < 5; i++) {
+    // Uncomment these to write to arduino
+    //stepperController.write(stars[i].rotations[0]);
+    //servoController.write(stars[i].rotations[1]);
+    if (i < 4) {
+      //stepperController.write(",");
+      //servoController.write(",");
+    }
+  }
+  //stepperController.write("-");
 }

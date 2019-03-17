@@ -2,6 +2,10 @@
 //sooo the arms fully extended are 2.875 (2 7/8th) inches long
 //with the two parts being 1.4375 (1 7/16th) inches long each
 float MAX_OFFSET = 2.875 / 24;
+float R = MAX_OFFSET * WINDOW_WIDTH;
+float HALF_R = R / 2;
+float HALF_R_SQ = HALF_R * HALF_R;
+
 class Star {
   float SPRING_SPEED = WINDOW_WIDTH / 2.5;
   static final int radius = 20;
@@ -13,6 +17,8 @@ class Star {
 
   float vX = 0;
   float vY = 0;
+  
+  int rotations[2] = {0, 0};
 
   // Add velocities
 
@@ -29,6 +35,23 @@ class Star {
 
   float getY() {
     return baseY + yOffset;
+  }
+  
+  // c^2 = a^2 + b^2 - 2ab*cos(C); <- law of cosine
+  void updateRotations() {
+    float baseAngle = atan2(yOffset, xOffset);
+    // c
+    float offsetMag = xOffset * xOffset + yOffset * yOffset;
+    
+    // this is the servo angle
+    float c = acos(1 - (offsetMag / HALF_R_SQ / 2));
+    float ab = (PI - c) / 2;
+    
+    float stepperAngle = baseAngle - ab;
+    
+    // convert to degrees and store
+    rotations[0] = stepperAngle / PI * 180;
+    rotations[1] = c / PI * 180
   }
 
   void setColliding(boolean isCol) {
@@ -65,6 +88,8 @@ class Star {
       if (xOffset > 1 || xOffset < -1) xOffset -= xOffset / WINDOW_WIDTH * MAX_OFFSET * SPRING_SPEED;
       if (yOffset > 1 || yOffset < -1) yOffset -= yOffset / WINDOW_WIDTH * MAX_OFFSET * SPRING_SPEED;
     }
+    
+    updateRotations();
   }
 
   void draw() {
