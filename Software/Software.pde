@@ -4,8 +4,8 @@ Serial stepperController;
 Serial servoController;
 
 // Configure ports setup here, base it off of the output from the console window
-String stepperPort = "COM4";
-String servoPort = "COM5";
+String stepperPort = "COM6";
+String servoPort = "COM3";
 
 // Update window size call as well because processing is lame
 int WINDOW_WIDTH = 800;
@@ -47,6 +47,12 @@ void setup() {
   }
 }
 
+void writeVal(Serial port, int val) {
+  if (val < 100) port.write(0);
+  if (val < 10) port.write(0);
+  port.write(val);
+}
+
 void draw() {
   // set draw properties
   background(20);
@@ -80,15 +86,20 @@ void draw() {
   circle(0, 0, 20);
   popMatrix();
   
+  // Star Rotations
+  print(stars[0].rotations[0]);
+  print(" : ");
+  println(stars[0].rotations[1]);
+  
   // Serial message test
-  for (int i = 0; i < 5; i++) {
-    // Uncomment these to write to arduino
-    //stepperController.write(stars[i].rotations[0]);
-    //servoController.write(stars[i].rotations[1]);
-    if (i < 4) {
-      //stepperController.write(",");
-      //servoController.write(",");
-    }
-  }
+  //for (int i = 0; i < 5; i++) {
+  //  // Uncomment these to write to arduino
+  //  writeVal(stepperController, stars[i].rotations[0]);
+  //  writeVal(servoController, stars[i].rotations[1]);
+  //  if (i < 4) {
+  //    stepperController.write(",");
+  //    servoController.write(",");
+  //  }
+  //}
   //stepperController.write("-");
 }

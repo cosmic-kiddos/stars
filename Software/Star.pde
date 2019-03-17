@@ -18,7 +18,7 @@ class Star {
   float vX = 0;
   float vY = 0;
   
-  int rotations[2] = {0, 0};
+  int[] rotations = {0, 0};
 
   // Add velocities
 
@@ -39,6 +39,12 @@ class Star {
   
   // c^2 = a^2 + b^2 - 2ab*cos(C); <- law of cosine
   void updateRotations() {
+    if ((yOffset < 0.1 && yOffset > -0.1) || (xOffset < 0.1 && xOffset > -0.1)) {
+      rotations[0] = 0;
+      rotations[1] = 0;
+      return; // hahaha bailing return statement
+    }
+    
     float baseAngle = atan2(yOffset, xOffset);
     // c
     float offsetMag = xOffset * xOffset + yOffset * yOffset;
@@ -50,8 +56,16 @@ class Star {
     float stepperAngle = baseAngle - ab;
     
     // convert to degrees and store
-    rotations[0] = stepperAngle / PI * 180;
-    rotations[1] = c / PI * 180
+    rotations[0] = round(stepperAngle / PI * 180);
+    rotations[1] = round(c / PI * 180);
+    
+    if (rotations[0] < 0) {
+      rotations[0] = rotations[0] + 360;
+    }
+    
+    if (rotations[1] < 0) {
+      rotations[1] = rotations[1] + 360;
+    }
   }
 
   void setColliding(boolean isCol) {
