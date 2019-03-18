@@ -36,7 +36,7 @@ void setup() {
   printArray(Serial.list());
   
   // Uncomment this to connect to steppers and servos, test the ports first
-  //stepperController = new Serial(this, stepperPort, 9600);
+  stepperController = new Serial(this, stepperPort, 9600);
   //servoController = new Serial(this, servoPort, 9600);
   
   // Generate stars, 24 of them to match array size
@@ -47,10 +47,13 @@ void setup() {
   }
 }
 
-void writeVal(Serial port, int val) {
-  if (val < 100) port.write(0);
-  if (val < 10) port.write(0);
-  port.write(val);
+String getWriteVal(int val) {
+  String writeVal = "";
+  if (val < 100) writeVal += "0";
+  if (val < 10) writeVal += "0";
+  writeVal += val;
+  
+  return writeVal;
 }
 
 void draw() {
@@ -87,19 +90,25 @@ void draw() {
   popMatrix();
   
   // Star Rotations
-  print(stars[0].rotations[0]);
-  print(" : ");
-  println(stars[0].rotations[1]);
+  //print(stars[0].rotations[0]);
+  //print(" : ");
+  //println(stars[0].rotations[1]);
   
+  String stepperVal = "";
+  String servoVal = "";
   // Serial message test
-  //for (int i = 0; i < 5; i++) {
-  //  // Uncomment these to write to arduino
-  //  writeVal(stepperController, stars[i].rotations[0]);
-  //  writeVal(servoController, stars[i].rotations[1]);
-  //  if (i < 4) {
-  //    stepperController.write(",");
-  //    servoController.write(",");
-  //  }
-  //}
-  //stepperController.write("-");
+  for (int i = 0; i < 5; i++) {
+    // Uncomment these to write to arduino
+    stepperVal += getWriteVal(stars[i].rotations[0]);
+    servoVal += getWriteVal(stars[i].rotations[1]);
+    if (i < 4) {
+      stepperVal += ",";
+      servoVal += ",";
+    }
+  }
+  stepperController.write(stepperVal + "-");
+  //servoController.write(stepperVal + "-");
+  // Debug Packet
+  println(stepperVal + "-");
+  //println(servoVal + "-");
 }
