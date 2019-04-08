@@ -1,10 +1,12 @@
 import processing.serial.*;
 
-Serial stepperController;
+Serial stepperController1;
+Serial stepperController2;
 Serial servoController;
 
 // Configure ports setup here, base it off of the output from the console window
-String stepperPort = "COM6";
+String stepperPort1 = "COM6";
+String stepperPort2 = "COM6";
 String servoPort = "COM3";
 
 // Update window size call as well because processing is lame
@@ -36,8 +38,12 @@ void setup() {
   printArray(Serial.list());
   
   // Uncomment this to connect to steppers and servos, test the ports first
-  stepperController = new Serial(this, stepperPort, 9600);
+  //stepperController1 = new Serial(this, stepperPort1, 9600);
+  delay(1000);
+  //stepperController2 = new Serial(this, stepperPort2, 9600);
+  delay(1000);
   //servoController = new Serial(this, servoPort, 9600);
+  delay(1000);
   
   // Generate stars, 24 of them to match array size
   for (int i = 0; i < numStars; i++) {
@@ -94,21 +100,32 @@ void draw() {
   //print(" : ");
   //println(stars[0].rotations[1]);
   
-  String stepperVal = "";
+  String stepper1Val = "";
+  String stepper2Val = "";
   String servoVal = "";
   // Serial message test
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 24; i++) {
     // Uncomment these to write to arduino
-    stepperVal += getWriteVal(stars[i].rotations[0]);
+    if (i < 12) stepper1Val += getWriteVal(stars[i].rotations[0]);
+    else stepper2Val += getWriteVal(stars[i].rotations[0]);
+
     servoVal += getWriteVal(stars[i].rotations[1]);
-    if (i < 4) {
-      stepperVal += ",";
+    if (i < 11) {
+      stepper1Val += ",";
+    } else if (i > 11 && i < 23) {
+      stepper2Val += ",";
+    }
+
+    if (i < 23) {
       servoVal += ",";
     }
   }
-  stepperController.write(stepperVal + "-");
+  //stepperController1.write(stepper1Val + "-");
+  //stepperController2.write(stepper2Val + "-");
   //servoController.write(stepperVal + "-");
   // Debug Packet
-  println(stepperVal + "-");
-  //println(servoVal + "-");
+  println(stepper1Val + "-");
+  println(stepper2Val + "-");
+  println(servoVal + "-");
+  delay(10);
 }
