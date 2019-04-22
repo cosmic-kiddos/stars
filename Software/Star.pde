@@ -64,8 +64,10 @@ class Star {
     }
     
     if (rotations[1] < 0) {
-      rotations[1] = rotations[1] + 360;
+      //rotations[1] = rotations[1] + 360;
     }
+    
+    rotations[0] = 360 - rotations[0];
   }
 
   void setColliding(boolean isCol) {

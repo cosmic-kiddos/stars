@@ -28,18 +28,19 @@ void updateKinect() {
     // 320, 480
     int depthW = context.depthWidth();
     int depthH = context.depthHeight();
-    int pixelSkip = 10;
+    int pixelSkip = 8;
     
     int scale = WINDOW_HEIGHT / 480;
     
     int xMin = 160;
     int xMax = 480;
+    int xRange = xMax - xMin;
   
     // configure active depth
     int kinectNear = 500;
     int kinectFar = 2500;
-    int silhouetteNear = 800;
-    int silhouetteFar = 2200;
+    int silhouetteNear = 600;
+    int silhouetteFar = 1800;
   
     noStroke();
     fill(255);
@@ -52,6 +53,8 @@ void updateKinect() {
       int gridIndex = x + y * depthW;
       int curDepth = depthPoints[gridIndex];
       
+      float mappedY = float(y) / float(480) * float(WINDOW_HEIGHT);
+      
       // draw low-res depth data
       //if(curDepth > 0) {  // only draw depth point if there's good data
       //  // set color to reflect distance - darker if further away
@@ -61,14 +64,14 @@ void updateKinect() {
       //}
       
       if (x >= xMin && x <= xMax) {
-        int translatedX = x - round(xMin / 1.25);
+        float mappedX = float(x - xMin) / xRange * WINDOW_WIDTH;
         // draw only values within silhouette range
         fill(255);
         if(curDepth > silhouetteNear && curDepth < silhouetteFar) {
-          rect(translatedX * scale, y * scale, pixelSkip * scale, pixelSkip * scale);
+          circle(mappedX, mappedY, pixelSkip * scale);
     
           for (int si = 0; si < numStars; si++) {
-            stars[si].checkCollision(translatedX * scale, y * scale);
+            stars[si].checkCollision(round(mappedX), round(mappedY));
           }
         }
       }

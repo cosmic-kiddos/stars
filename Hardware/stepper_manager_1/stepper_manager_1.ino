@@ -16,20 +16,23 @@ const int stepsPerRevolution = 2048;  // change this to fit the number of steps 
 // initialize the steppers on the specified pins:
 // Note. Some stepper controllers swap the middle two pins as is the case in this setup.
 // Ex. Some kits would use 2,3,4,5 for stepper0
-Stepper stepper0(stepsPerRevolution, 2, 4, 3, 5);
-Stepper stepper1(stepsPerRevolution, 6, 8, 7, 9);
-//Stepper stepper2(stepsPerRevolution, 10, 12, 11, 13);
-Stepper stepper2(stepsPerRevolution, 14, 16, 15, 17);
-Stepper stepper3(stepsPerRevolution, 18, 20, 19, 21);
+Stepper stepper0(stepsPerRevolution, 46, 48, 47, 49);
+Stepper stepper1(stepsPerRevolution, 42, 44, 43, 45);
 
-Stepper stepper4(stepsPerRevolution, 22, 26, 24, 28);
-Stepper stepper5(stepsPerRevolution, 23, 27, 25, 29);
-Stepper stepper6(stepsPerRevolution, 30, 34, 32, 36);
-Stepper stepper7(stepsPerRevolution, 31, 35, 33, 37);
-Stepper stepper8(stepsPerRevolution, 38, 42, 40, 44);
-Stepper stepper9(stepsPerRevolution, 39, 43, 41, 45);
-Stepper stepper10(stepsPerRevolution, 46, 50, 48, 52);
-Stepper stepper11(stepsPerRevolution, 47, 51, 49, 53);
+Stepper stepper2(stepsPerRevolution, 38, 40, 39, 41);
+Stepper stepper3(stepsPerRevolution, 34, 36, 35, 37);
+
+Stepper stepper4(stepsPerRevolution, 30, 32, 31, 33);
+Stepper stepper5(stepsPerRevolution, 26, 28, 27, 29);
+
+Stepper stepper6(stepsPerRevolution, 22, 24, 23, 25);
+Stepper stepper7(stepsPerRevolution, 18, 20, 19, 21);
+
+Stepper stepper8(stepsPerRevolution, 14, 16, 15, 17);
+Stepper stepper9(stepsPerRevolution, 2, 4, 3, 5);
+
+Stepper stepper10(stepsPerRevolution, 6, 8, 7, 9);
+Stepper stepper11(stepsPerRevolution, 10, 12, 11, 13);
 
 //build an array of all the stepper motors
 Stepper stepperArray[] = {
@@ -38,11 +41,10 @@ Stepper stepperArray[] = {
   stepper8, stepper9, stepper10, stepper11
 };
 
-int currentSteps[] = {0, 0, 0, 0, 0}; //track the current steps for each stepper
-int desiredSteps[] = {0, 0, 0, 0, 0}; //the steps required to put the stepper to the desired angle
+int currentSteps[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //track the current steps for each stepper
+int desiredSteps[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //the steps required to put the stepper to the desired angle
 
 void setup() {
-  pinMode(13, OUTPUT);
   // set the speed to 4 rpm:
   int speed = 10;
 
@@ -51,6 +53,13 @@ void setup() {
   stepper2.setSpeed(speed);
   stepper3.setSpeed(speed);
   stepper4.setSpeed(speed);
+  stepper5.setSpeed(speed);
+  stepper6.setSpeed(speed);
+  stepper7.setSpeed(speed);
+  stepper8.setSpeed(speed);
+  stepper9.setSpeed(speed);
+  stepper10.setSpeed(speed);
+  stepper11.setSpeed(speed);
 
   // initialize the serial port:
   Serial.begin(9600);
@@ -61,26 +70,31 @@ void loop() {
   // If there is something in the buffer
   if (Serial.available() > 0) {
     message = Serial.readStringUntil('-');
+    boolean goodMsg = message.endsWith(",");
+
     // 090, 000, 000, 000, 000-
     // val 1 0 - 3
     // val 2 4 - 7
     // val 3 8 - 11
     // val 4 12 - 15
     // val 5 16 - 19
+    // 200,200,200,200,200,200,000,000,000,000,000,000,-
+    // 000,000,000,000,000,000,000,000,000,000,000,000,-
     // message.substring(start, end).toInt() <----- Gets angle
-    for (int i = 0; i < numberSteppers; i++) {
-      int angle = message.substring(4 * i, 4 * i + 3).toInt();
-      desiredSteps[i] = angle * stepsPerRevolution / 360;
-      //Serial.println(message.substring(4 * i, 4 * i + 3));
+    if (goodMsg) {
+      for (int i = 0; i < numberSteppers; i++) {
+        int angle = message.substring(4 * i, 4 * i + 3).toInt();
+        desiredSteps[i] = int(map(angle, 0, 360, 0, stepsPerRevolution));
+      }
     }
   }
 
-  for (int i = 0; i <= numberSteppers; i++) {
+  for (int i = 0; i < numberSteppers; i++) {
     if (currentSteps[i] < desiredSteps[i]) {
-      stepperArray[i].step(1); //Step once forward
+      stepperArray[i].step(-1); //Step once forward
       currentSteps[i] += 1; //Remember/track this step
     } else if (currentSteps[i] > desiredSteps[i]) {
-      stepperArray[i].step(-1); //Step once forward
+      stepperArray[i].step(1); //Step once forward
       currentSteps[i] -= 1; //Remember/track this step
     }
   }

@@ -5,18 +5,27 @@ Serial stepperController2;
 Serial servoController;
 
 // Configure ports setup here, base it off of the output from the console window
-String stepperPort1 = "COM6";
-String stepperPort2 = "COM6";
-String servoPort = "COM3";
+String stepperPort1 = "COM8";
+String stepperPort2 = "COM4";
+String servoPort = "COM11";
 
 // Update window size call as well because processing is lame
 int WINDOW_WIDTH = 800;
 int WINDOW_HEIGHT = 1200;
 
+// Send update timer
+int lastFrame = 0;
+int SEND_UPDATE_MAX = 200;
+int sendUpdateTimer = SEND_UPDATE_MAX;
+
+boolean shouldSendZero = true;
+
+boolean lastFrameSpaceDown = false;
+
 int numStars = 24;
 Star[] stars = new Star[numStars];
 
-float mousePush = 20;
+float mousePush = 30;
 float minPushDist = (Star.radius * Star.radius) + (mousePush * mousePush);
 boolean shouldPush(Star s) {
   float distSq = (mouseX - s.getX()) * (mouseX - s.getX()) +
@@ -33,16 +42,15 @@ void setup() {
   // Uncomment this to enable kinect stuff
   //initKinect();
   
-  
   println("PORTS");
   printArray(Serial.list());
   
   // Uncomment this to connect to steppers and servos, test the ports first
-  //stepperController1 = new Serial(this, stepperPort1, 9600);
-  delay(1000);
-  //stepperController2 = new Serial(this, stepperPort2, 9600);
-  delay(1000);
-  //servoController = new Serial(this, servoPort, 9600);
+  stepperController1 = new Serial(this, stepperPort1, 9600);
+  delay(1500);
+  stepperController2 = new Serial(this, stepperPort2, 9600);
+  delay(1500);
+  servoController = new Serial(this, servoPort, 9600);
   delay(1000);
   
   // Generate stars, 24 of them to match array size
@@ -59,12 +67,32 @@ String getWriteVal(int val) {
   if (val < 10) writeVal += "0";
   writeVal += val;
   
+  if (shouldSendZero) writeVal = "000";
+  
   return writeVal;
+}
+
+void keyPressed() {
+  if (key == ' ' && !lastFrameSpaceDown) {
+    lastFrameSpaceDown = true;
+    shouldSendZero = !shouldSendZero;
+  }
+}
+
+void keyReleased() {
+  if (key == ' ') {
+    lastFrameSpaceDown = false;
+  }
 }
 
 void draw() {
   // set draw properties
   background(20);
+  
+  // Get DeltaTime
+  int currentFrame = millis();
+  int dt = currentFrame - lastFrame;
+  lastFrame = currentFrame;
 
   updateKinect();
 
@@ -106,26 +134,28 @@ void draw() {
   // Serial message test
   for (int i = 0; i < 24; i++) {
     // Uncomment these to write to arduino
-    if (i < 12) stepper1Val += getWriteVal(stars[i].rotations[0]);
-    else stepper2Val += getWriteVal(stars[i].rotations[0]);
-
-    servoVal += getWriteVal(stars[i].rotations[1]);
-    if (i < 11) {
+    if (i % 4 < 2) {
+      stepper1Val += getWriteVal(stars[i].rotations[0]);
       stepper1Val += ",";
-    } else if (i > 11 && i < 23) {
+    }
+    else {
+      stepper2Val += getWriteVal(stars[i].rotations[0]);
       stepper2Val += ",";
     }
 
-    if (i < 23) {
-      servoVal += ",";
-    }
+    servoVal += getWriteVal(stars[i].rotations[1]);
+    servoVal += ",";
   }
-  //stepperController1.write(stepper1Val + "-");
-  //stepperController2.write(stepper2Val + "-");
-  //servoController.write(stepperVal + "-");
-  // Debug Packet
-  println(stepper1Val + "-");
-  println(stepper2Val + "-");
-  println(servoVal + "-");
-  delay(10);
+
+  sendUpdateTimer += dt;
+  if (sendUpdateTimer > SEND_UPDATE_MAX) {
+    sendUpdateTimer = 0;
+    stepperController1.write(stepper1Val + "-");
+    stepperController2.write(stepper2Val + "-");
+    servoController.write(servoVal + "-");
+    // Debug Packet
+    println(stepper1Val + "-");
+    println(stepper2Val + "-");
+    println(servoVal + "-");
+  }
 }
