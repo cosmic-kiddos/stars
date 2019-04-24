@@ -15,12 +15,13 @@ int WINDOW_HEIGHT = 1200;
 
 // Send update timer
 int lastFrame = 0;
-int SEND_UPDATE_MAX = 200;
+int SEND_UPDATE_MAX = 400;
 int sendUpdateTimer = SEND_UPDATE_MAX;
 
 boolean shouldSendZero = true;
 
 boolean lastFrameSpaceDown = false;
+boolean portsOpen = false;
 
 int numStars = 24;
 Star[] stars = new Star[numStars];
@@ -40,24 +41,27 @@ void setup() {
   background(0, 0, 0);
   
   // Uncomment this to enable kinect stuff
-  //initKinect();
+  initKinect();
   
   println("PORTS");
   printArray(Serial.list());
   
   // Uncomment this to connect to steppers and servos, test the ports first
-  stepperController1 = new Serial(this, stepperPort1, 9600);
-  delay(1500);
-  stepperController2 = new Serial(this, stepperPort2, 9600);
-  delay(1500);
-  servoController = new Serial(this, servoPort, 9600);
-  delay(1000);
+  if (portsOpen) {
+    stepperController1 = new Serial(this, stepperPort1, 9600);
+    delay(1500);
+    stepperController2 = new Serial(this, stepperPort2, 9600);
+    delay(1500);
+    servoController = new Serial(this, servoPort, 9600);
+    delay(1000);
+  }
   
   // Generate stars, 24 of them to match array size
   for (int i = 0; i < numStars; i++) {
     int col = i % 4; // we have 4 columns
     int row = round(i / 4); // we have 6 rows
-    stars[i] = new Star(col, row);
+    float xIntent = col > 1 ? 1 : -1;
+    stars[i] = new Star(col, row, xIntent);
   }
 }
 
@@ -150,12 +154,14 @@ void draw() {
   sendUpdateTimer += dt;
   if (sendUpdateTimer > SEND_UPDATE_MAX) {
     sendUpdateTimer = 0;
-    stepperController1.write(stepper1Val + "-");
-    stepperController2.write(stepper2Val + "-");
-    servoController.write(servoVal + "-");
+    if (portsOpen) {
+      stepperController1.write(stepper1Val + "-");
+      stepperController2.write(stepper2Val + "-");
+      servoController.write(servoVal + "-");
+    }
     // Debug Packet
     println(stepper1Val + "-");
-    println(stepper2Val + "-");
+    //println(stepper2Val + "-");
     println(servoVal + "-");
   }
 }

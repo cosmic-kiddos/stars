@@ -38,6 +38,14 @@ Stepper stepperArray[] = {
 
 int currentSteps[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //track the current steps for each stepper
 int desiredSteps[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //the steps required to put the stepper to the desired angle
+boolean backwards[] = {
+  false, false,
+  false, false,
+  false, false,
+  true, false,
+  true, true,
+  true, true
+};
 
 void setup() {
   // set the speed to 4 rpm:
@@ -86,10 +94,18 @@ void loop() {
 
   for (int i = 0; i < numberSteppers; i++) {
     if (currentSteps[i] < desiredSteps[i]) {
-      stepperArray[i].step(1); //Step once forward
+      if (backwards[i]) {
+        stepperArray[i].step(-1);
+      } else {
+        stepperArray[i].step(1);
+      }
       currentSteps[i] += 1; //Remember/track this step
     } else if (currentSteps[i] > desiredSteps[i]) {
-      stepperArray[i].step(-1); //Step once forward
+      if (backwards[i]) {
+        stepperArray[i].step(1);
+      } else {
+        stepperArray[i].step(-1);
+      }
       currentSteps[i] -= 1; //Remember/track this step
     }
   }

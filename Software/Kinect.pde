@@ -28,7 +28,7 @@ void updateKinect() {
     // 320, 480
     int depthW = context.depthWidth();
     int depthH = context.depthHeight();
-    int pixelSkip = 8;
+    int pixelSkip = 10;
     
     int scale = WINDOW_HEIGHT / 480;
     
@@ -40,7 +40,7 @@ void updateKinect() {
     int kinectNear = 500;
     int kinectFar = 2500;
     int silhouetteNear = 600;
-    int silhouetteFar = 1800;
+    int silhouetteFar = 1500;
   
     noStroke();
     fill(255);
@@ -71,7 +71,7 @@ void updateKinect() {
           circle(mappedX, mappedY, pixelSkip * scale);
     
           for (int si = 0; si < numStars; si++) {
-            stars[si].checkCollision(round(mappedX), round(mappedY));
+            stars[si].checkKinectPixel(round(mappedX), round(mappedY));
           }
         }
       }

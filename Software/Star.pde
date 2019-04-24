@@ -6,10 +6,21 @@ float R = MAX_OFFSET * WINDOW_WIDTH;
 float HALF_R = R / 2;
 float HALF_R_SQ = HALF_R * HALF_R;
 
+class KinectPixel {
+  float x;
+  float y;
+  
+  KinectPixel(float nx, float ny) {
+    x = nx;
+    y = ny;
+  }
+}
+
 class Star {
   float SPRING_SPEED = WINDOW_WIDTH / 2.5;
   static final int radius = 20;
 
+  float xIntent;
   float baseX;
   float baseY;
   float xOffset = 0;
@@ -23,10 +34,13 @@ class Star {
   // Add velocities
 
   boolean isColliding = false;
+  
+  ArrayList<KinectPixel> kinectPixels = new ArrayList<KinectPixel>();
 
-  Star(int col, int row) {
+  Star(int col, int row, float xArtisticIntent) {
     baseX = WINDOW_WIDTH / 4 * (col + 0.5);
     baseY = WINDOW_HEIGHT / 6 * (row + 0.5);
+    xIntent = xArtisticIntent;
   }
 
   float getX() {
@@ -45,29 +59,23 @@ class Star {
       return; // hahaha bailing return statement
     }
     
-    float baseAngle = atan2(yOffset, xOffset);
+    float baseAngle = (atan2(yOffset, xOffset) + PI) / PI * 180;
+    baseAngle = 360 - ((baseAngle + 90) % 360); // adjust it
     // c
-    float offsetMag = xOffset * xOffset + yOffset * yOffset;
+    float offsetMag = sqrt(xOffset * xOffset + yOffset * yOffset);
     
-    // this is the servo angle
-    float c = acos(1 - (offsetMag / HALF_R_SQ / 2));
-    float ab = (PI - c) / 2;
+    int servoAngle = round(offsetMag / R * 180);
+    float theta = acos(offsetMag / R) / PI * 180;
+    int stepperAngle = round(baseAngle + theta) % 360;
     
-    float stepperAngle = baseAngle - ab;
-    
+    // Debug Draw
+    textSize(50);
+    fill(20, 100, 200);
+    text(stepperAngle, baseX, baseY);
+ 
     // convert to degrees and store
-    rotations[0] = round(stepperAngle / PI * 180);
-    rotations[1] = round(c / PI * 180);
-    
-    if (rotations[0] < 0) {
-      rotations[0] = rotations[0] + 360;
-    }
-    
-    if (rotations[1] < 0) {
-      //rotations[1] = rotations[1] + 360;
-    }
-    
-    rotations[0] = 360 - rotations[0];
+    rotations[0] = stepperAngle;
+    rotations[1] = servoAngle;
   }
 
   void setColliding(boolean isCol) {
@@ -95,14 +103,62 @@ class Star {
       float mag = sqrt(dx * dx + dy * dy);
       float pushX = dx / mag;
       float pushY = dy / mag;
-      setPosition(pushX, pushY);
+      //setPosition(pushX, pushY);
+    }
+  }
+  
+  void checkKinectPixel(int x, int y) {
+    float dx = baseX - x;
+    float dy = baseY - y;
+    float distSq = (dx * dx) + (dy * dy);
+
+    if (R * R > distSq) {
+       kinectPixels.add(new KinectPixel(dx, dy));
     }
   }
 
   void update() {
-    if (!isColliding) {
-      if (xOffset > 1 || xOffset < -1) xOffset -= xOffset / WINDOW_WIDTH * MAX_OFFSET * SPRING_SPEED;
-      if (yOffset > 1 || yOffset < -1) yOffset -= yOffset / WINDOW_WIDTH * MAX_OFFSET * SPRING_SPEED;
+    //if (!isColliding) {
+    //  if (xOffset > 1 || xOffset < -1) xOffset -= xOffset / WINDOW_WIDTH * MAX_OFFSET * SPRING_SPEED;
+    //  if (yOffset > 1 || yOffset < -1) yOffset -= yOffset / WINDOW_WIDTH * MAX_OFFSET * SPRING_SPEED;
+    //}
+
+    if (kinectPixels.size() > 0) {
+      int mass = kinectPixels.size();
+      float xAvg = 0;
+      float yAvg = 0;
+      
+      for (int i = 0; i < kinectPixels.size(); i++) {
+        xAvg += kinectPixels.get(i).x;
+        yAvg += kinectPixels.get(i).y;
+      }
+      
+      xAvg = xAvg / mass;
+      yAvg = yAvg / mass;
+      
+      kinectPixels.clear();
+      
+      float mag = sqrt((xAvg * xAvg) + (yAvg * yAvg));
+      float xMag = xAvg / mag;
+      float yMag = yAvg / mag;
+      
+      mag = mag >= R ? R : mag;
+      float distRatio = 1 - mag / R;
+      
+      //text(round(xAvg) + " : " + round(yAvg), baseX, baseY);
+      xOffset = xMag * mass / 5 * distRatio;
+      yOffset = yMag * mass / 5 * distRatio;
+      
+
+      // handle for if its avg is center here
+      if (mass > 340) {
+        xOffset = xIntent * (R - 10);
+        yOffset = 1;
+      }
+      
+    } else {
+      xOffset = 0;
+      yOffset = 0;
     }
     
     updateRotations();
