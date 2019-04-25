@@ -39,8 +39,8 @@ void updateKinect() {
     // configure active depth
     int kinectNear = 500;
     int kinectFar = 2500;
-    int silhouetteNear = 600;
-    int silhouetteFar = 1500;
+    int silhouetteNear = 200;
+    int silhouetteFar = 1800;
   
     noStroke();
     fill(255);

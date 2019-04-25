@@ -46,7 +46,7 @@ int desiredSteps[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //the steps required 
 
 void setup() {
   // set the speed to 4 rpm:
-  int speed = 10;
+  int speed = 90;
 
   stepper0.setSpeed(speed);
   stepper1.setSpeed(speed);

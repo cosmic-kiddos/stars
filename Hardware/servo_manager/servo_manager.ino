@@ -9,7 +9,7 @@
 #include <Servo.h>
 
 const int numberServos = 24; //change this depending on the number of stepper motors on this arduino
-int stepSize = 5;
+int stepSize = 7;
 int servoPins[] = {
   30, 36, 38, 44,
   29, 35, 39, 45,

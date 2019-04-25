@@ -15,13 +15,13 @@ int WINDOW_HEIGHT = 1200;
 
 // Send update timer
 int lastFrame = 0;
-int SEND_UPDATE_MAX = 400;
+int SEND_UPDATE_MAX = 100;
 int sendUpdateTimer = SEND_UPDATE_MAX;
 
 boolean shouldSendZero = true;
 
 boolean lastFrameSpaceDown = false;
-boolean portsOpen = false;
+boolean portsOpen = true;
 
 int numStars = 24;
 Star[] stars = new Star[numStars];

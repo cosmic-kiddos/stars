@@ -49,7 +49,7 @@ boolean backwards[] = {
 
 void setup() {
   // set the speed to 4 rpm:
-  int speed = 60;
+  int speed = 90;
 
   stepper0.setSpeed(speed);
   stepper1.setSpeed(speed);

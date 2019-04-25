@@ -64,7 +64,7 @@ class Star {
     // c
     float offsetMag = sqrt(xOffset * xOffset + yOffset * yOffset);
     
-    int servoAngle = round(offsetMag / R * 180);
+    int servoAngle = round(offsetMag / R * 130);
     float theta = acos(offsetMag / R) / PI * 180;
     int stepperAngle = round(baseAngle + theta) % 360;
     
@@ -146,12 +146,12 @@ class Star {
       float distRatio = 1 - mag / R;
       
       //text(round(xAvg) + " : " + round(yAvg), baseX, baseY);
-      xOffset = xMag * mass / 5 * distRatio;
-      yOffset = yMag * mass / 5 * distRatio;
+      xOffset = xMag * mass / 2 * distRatio;
+      yOffset = yMag * mass / 2 * distRatio;
       
 
       // handle for if its avg is center here
-      if (mass > 340) {
+      if (mass > 300) {
         xOffset = xIntent * (R - 10);
         yOffset = 1;
       }
